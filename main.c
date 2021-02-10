@@ -293,32 +293,8 @@ struct {
 } bendAmount;
 
 /*
-//  These are example numbers that you might expect in the struct.
-//  This function was used for debugging the eeprom stuff. 
-
-void writeData(void){
-
-    bendAmount.up = -34.13333333333333;
-    bendAmount.down = -22.755555555555553;
-    bendAmount.left = -9.416091954022988;
-    bendAmount.right = 19.504761904761903;
-
-    bendAmount.voltage[0] = 478;
-    bendAmount.voltage[1] = 577;
-    bendAmount.voltage[2] = 484;
-    bendAmount.voltage[3] = 542;
-
-    bendAmount.limit[0]=-8192;
-    bendAmount.limit[1]= 5461;
-    bendAmount.limit[2]=-2731;
-    bendAmount.limit[3]=-5461;
-
-    eeprom_write_block(&bendAmount, eeFloatAddr, sizeof(bendAmount)); 
-}
-*/
-
 void usbMidiMessageIn(uchar * data){
-/*
+
   static uchar i = 0;
 
   if (i==0) { //Sysex not started
@@ -342,16 +318,15 @@ void usbMidiMessageIn(uchar * data){
         eeprom_read_block(&bendAmount, eeFloatAddr, sizeof(bendAmount)); 
       }
     }
-  }*/
+  }
 }
-
+*/
 void usbFunctionWriteOut(uchar * data, uchar len) {
 
 //  usbMidiMessageIn(data);
 //  if (len==8) usbMidiMessageIn(data+4);
 
 }
-
 
 
 
@@ -380,11 +355,11 @@ int main(void) {
 		if(usbInterruptIsReady())
 		{
 			
-			//usbSetInterrupt((uchar*)"\x90\x2a\x2a",3);
-			if(!++i)
+			usbSetInterrupt((uchar*)"\x0E\x90\x2a\x2a",4);
+			/*if(!++i)
 				if(!++j)
 					if(!++k)
-						PORTB ^= 1 << PB1;
+						PORTB ^= 1 << PB1;*/
 		}
 		/*for(uchar i=0;i<20;++i)
 		{
