@@ -292,9 +292,18 @@ struct {
   int16_t limit[4];
 } bendAmount;
 
-/*
-void usbMidiMessageIn(uchar * data){
 
+void usbMidiMessageIn(uchar * data)
+{
+	if(data[0]==0x09&&data[1]==0x90)
+	{
+		if(data[3]>0)
+			PORTB |= 1<<PB1;
+		else
+			PORTB &= ~(1<<PB1);
+	}
+	
+/*
   static uchar i = 0;
 
   if (i==0) { //Sysex not started
@@ -318,14 +327,14 @@ void usbMidiMessageIn(uchar * data){
         eeprom_read_block(&bendAmount, eeFloatAddr, sizeof(bendAmount)); 
       }
     }
-  }
+  }*/
 }
-*/
-void usbFunctionWriteOut(uchar * data, uchar len) {
 
-//  usbMidiMessageIn(data);
-//  if (len==8) usbMidiMessageIn(data+4);
+void usbFunctionWriteOut(uchar * data, uchar len)
+{
 
+	usbMidiMessageIn(data);
+	if (len==8) usbMidiMessageIn(data+4);
 }
 
 
