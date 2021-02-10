@@ -12,9 +12,6 @@
 
 #include "usbdrv.h"
 
-#ifndef NULL
-#define NULL	((void *)0)
-#endif
 
 
 /* ------------------------------------------------------------------------- */
@@ -317,7 +314,7 @@ int main(void) {
 			{
 				PORTB &= ~(1<<PB1);
 			}
-			usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
+			//usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
 
 		}
 
