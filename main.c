@@ -295,13 +295,8 @@ struct {
 
 void usbMidiMessageIn(uchar * data)
 {
-	if(data[0]==0x09&&data[1]==0x90)
-	{
-		if(data[3]>0)
-			PORTB |= 1<<PB1;
-		else
-			PORTB &= ~(1<<PB1);
-	}
+	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
+		PORTB ^= 1<<PB1;
 	
 /*
   static uchar i = 0;
