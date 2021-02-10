@@ -362,7 +362,7 @@ void usbFunctionWriteOut(uchar * data, uchar len) {
 int main(void)
 {
 	usbDeviceDisconnect();
-	for(i=0;i<20;i++){  /* 300 ms disconnect */
+	for(uchar i=0;i<20;i++){  /* 300 ms disconnect */
 		_delay_ms(15);
 	}
 	usbDeviceConnect();
