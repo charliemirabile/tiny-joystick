@@ -372,10 +372,10 @@ int main(void) {
 
   eeprom_read_block(&bendAmount, eeFloatAddr, sizeof(bendAmount)); 
 	
-	/*calibrationValue = eeprom_read_byte(0); /* calibration value from last time */
+	calibrationValue = eeprom_read_byte(0); /* calibration value from last time */
 	if(calibrationValue != 0xff){
 		OSCCAL = calibrationValue;
-	}*/
+	}
 	usbDeviceDisconnect();
 	for(i=0;i<20;i++){  /* 300 ms disconnect */
 		_delay_ms(15);
@@ -386,10 +386,7 @@ int main(void) {
 
 	usbInit();
 	sei();
-	DDRB |= 1<<PB1;
-	for(;;_dela_ms(200))
-		PORTB^=1<<PB1;
-	/*
+	
 	for(;;){	/* main event loop */
 		
 		wdt_reset();
@@ -521,6 +518,6 @@ int main(void) {
 
     }
 
-	}*/
+	}
 	return 0;
 }
