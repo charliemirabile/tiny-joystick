@@ -369,7 +369,7 @@ int main(void) {
 			{
 				PORTB &= ~(1<<PB1);
 			}
-			usbSetInterrupt((uchar*)"\x0E\x90\x2a\x2a",4);
+			usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
 			/*if(!++i)
 				if(!++j)
 					if(!++k)
