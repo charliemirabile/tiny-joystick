@@ -370,15 +370,22 @@ int main(void) {
 
 	usbInit();
 	sei();
-	
-	for(;;){	/* main event loop */
+	DDBR |= 1 << PB1;
+	for(;;)
+	{
 		
 		wdt_reset();
 		usbPoll();
-    if(usbInterruptIsReady()){
+		if(usbInterruptIsReady())
+		{
 
 
-    }
+		}
+		for(uchar i=0;i<100;++i)
+		{
+			_delay_ms(15);
+		}
+		PORTB ^= 1 << PB1;
 
 	}
 	return 0;
