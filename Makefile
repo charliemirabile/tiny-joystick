@@ -8,7 +8,7 @@
 # This Revision: $Id$
 
 DEVICE=attiny85
-AVRDUDE = avrdude -c USBASP -p $(DEVICE) -B10
+AVRDUDE = avrdude -c usbtiny -p $(DEVICE) -B10
 
 COMPILE = avr-gcc -Wall -O2 -Iusbdrv -I. -mmcu=$(DEVICE) -DF_CPU=16500000 -DDEBUG_LEVEL=0
 # NEVER compile the final product with debugging! Any debug output will
