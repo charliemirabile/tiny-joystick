@@ -372,7 +372,7 @@ int main(void) {
 
 	usbInit();
 	sei();
-	for(unsigned long i=0;;++i)
+	for(uchar i=0,j=0,k=0;;)
 	{
 		
 		wdt_reset();
@@ -381,8 +381,10 @@ int main(void) {
 		{
 			
 			//usbSetInterrupt((uchar*)"\x90\x2a\x2a",3);
-			if(i==0)
-				PORTB ^= 1 << PB1;
+			if(!++i)
+				if(!++j)
+					if(!++k)
+						PORTB ^= 1 << PB1;
 		}
 		/*for(uchar i=0;i<20;++i)
 		{
