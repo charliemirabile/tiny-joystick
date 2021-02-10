@@ -372,7 +372,7 @@ int main(void) {
 
 	usbInit();
 	sei();
-	for(unsigned int i=0;;++i)
+	for(unsigned long i=0;;++i)
 	{
 		
 		wdt_reset();
