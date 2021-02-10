@@ -370,7 +370,7 @@ int main(void) {
 
 	usbInit();
 	sei();
-	DDBR |= 1 << PB1;
+	DDRB |= 1 << PB1;
 	for(;;)
 	{
 		
