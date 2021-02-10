@@ -379,15 +379,13 @@ int main(void) {
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
-
-
+			if(i==0)
+				PORTB ^= 1 << PB1;
 		}
 		/*for(uchar i=0;i<20;++i)
 		{
 			_delay_ms(15);
 		}*/
-		if(i==0)
-			PORTB ^= 1 << PB1;
 
 	}
 	return 0;
