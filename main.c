@@ -381,7 +381,7 @@ int main(void) {
 
 
 		}
-		for(uchar i=0;i<100;++i)
+		for(uchar i=0;i<20;++i)
 		{
 			_delay_ms(15);
 		}
