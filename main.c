@@ -379,6 +379,8 @@ int main(void) {
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
+			
+			usbSetInterrupt((uchar*)"\x90\x2a\x42",3);
 			/*if(i==0)
 				PORTB ^= 1 << PB1;*/
 		}
