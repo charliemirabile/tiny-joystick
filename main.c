@@ -463,7 +463,7 @@ int main(void) {
               else if (bend1>127) bend1=127;
 
               midiMsg[i++]= 0x0B; // Cable Number, Code Index Number
-              midiMsg[i++]= 0xB0;
+              midiMsg[i++]= 0xE0;
               midiMsg[i++]= 1;
               midiMsg[i++]= bend1&0x7F;
               lastmod = midiMsg[i++];
@@ -473,7 +473,7 @@ int main(void) {
           } else {
             if (lastmod!=0) { //Leaving modulation region, make sure it's left at zero
               midiMsg[i++]= 0x0B;
-              midiMsg[i++]= 0xB0;
+              midiMsg[i++]= 0xE0;
               midiMsg[i++]= 1;
               midiMsg[i++]= 0;
               lastmod=0;
