@@ -372,6 +372,11 @@ int main(void)
 	usbInit();
 	sei();
 	DDRB |= 1<<PB1;
-	for(;;_delay_ms(2000))
-		PORTB^=1<<PB1;
+	PORTB &= ~(1<<PB1);
+	for(;;)
+	{
+		for(uchar i=0;i<100;++i)
+			_delay_ms(15);
+		PORTB ^= (1 << PB1);
+	}
 }
