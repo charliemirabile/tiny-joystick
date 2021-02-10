@@ -380,7 +380,7 @@ int main(void) {
 		if(usbInterruptIsReady())
 		{
 			
-			//usbSetInterrupt((uchar*)"\x90\x2a\x42",3);
+			usbSetInterrupt((uchar*)"\x90\x2a\x2a",3);
 			/*if(i==0)
 				PORTB ^= 1 << PB1;*/
 		}
