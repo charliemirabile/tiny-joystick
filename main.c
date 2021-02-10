@@ -372,7 +372,7 @@ int main(void) {
 
 	usbInit();
 	sei();
-	for(;;)
+	for(unsigned int i=0;;++i)
 	{
 		
 		wdt_reset();
@@ -385,8 +385,9 @@ int main(void) {
 		/*for(uchar i=0;i<20;++i)
 		{
 			_delay_ms(15);
-		}
-		PORTB ^= 1 << PB1;*/
+		}*/
+		if(i==0)
+			PORTB ^= 1 << PB1;
 
 	}
 	return 0;
