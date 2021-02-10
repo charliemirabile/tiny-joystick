@@ -361,6 +361,9 @@ void usbFunctionWriteOut(uchar * data, uchar len) {
 
 int main(void)
 {
+	
+	DDRB |= 1<<PB1;
+	PORTB &= ~(1<<PB1);
 	usbDeviceDisconnect();
 	for(uchar i=0;i<20;i++){  /* 300 ms disconnect */
 		_delay_ms(15);
@@ -371,8 +374,6 @@ int main(void)
 
 	usbInit();
 	sei();
-	DDRB |= 1<<PB1;
-	PORTB &= ~(1<<PB1);
 	for(;;)
 	{
 		for(uchar i=0;i<100;++i)
