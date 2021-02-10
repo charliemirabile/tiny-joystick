@@ -293,10 +293,12 @@ struct {
 } bendAmount;
 
 
+uchar should_be_on=0;
+
 void usbMidiMessageIn(uchar * data)
 {
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
-		PORTB ^= 1<<PB1;
+		should_be_on ^= 1;
 	
 /*
   static uchar i = 0;
@@ -359,6 +361,14 @@ int main(void) {
 		if(usbInterruptIsReady())
 		{
 			
+			if(should_be_on)
+			{
+				PORTB |= 1<<PB1;
+			}
+			else
+			{
+				PORTB &= ~(1<<PB1);
+			}
 			usbSetInterrupt((uchar*)"\x0E\x90\x2a\x2a",4);
 			/*if(!++i)
 				if(!++j)
