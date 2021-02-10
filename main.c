@@ -318,7 +318,7 @@ void writeData(void){
 */
 
 void usbMidiMessageIn(uchar * data){
-
+/*
   static uchar i = 0;
 
   if (i==0) { //Sysex not started
@@ -342,13 +342,13 @@ void usbMidiMessageIn(uchar * data){
         eeprom_read_block(&bendAmount, eeFloatAddr, sizeof(bendAmount)); 
       }
     }
-  }
+  }*/
 }
 
 void usbFunctionWriteOut(uchar * data, uchar len) {
 
-  usbMidiMessageIn(data);
-  if (len==8) usbMidiMessageIn(data+4);
+//  usbMidiMessageIn(data);
+//  if (len==8) usbMidiMessageIn(data+4);
 
 }
 
@@ -380,7 +380,7 @@ int main(void) {
 		if(usbInterruptIsReady())
 		{
 			
-			usbSetInterrupt((uchar*)"\x90\x2a\x42",3);
+			//usbSetInterrupt((uchar*)"\x90\x2a\x42",3);
 			/*if(i==0)
 				PORTB ^= 1 << PB1;*/
 		}
