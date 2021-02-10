@@ -264,78 +264,24 @@ void usbEventResetReady(void) {
 	cli();
 	calibrateOscillator();
 	sei();
-	eeprom_write_byte(0, OSCCAL);   /* store the calibrated value in EEPROM */
+	//eeprom_write_byte(0, OSCCAL);   /* store the calibrated value in EEPROM */
 }
-
-
-
-
-
-
-/*
-  SysEx -> EEPROM stuff
-  USB-MIDI messages arrive at the function usbFunctionWriteOut() and may be 4 or 8 bytes.
-  The code index number (low nibble of the first byte) determintes if the sysex ends with
-  that message or if there is more data expected.
-*/
-
-#define eeFloatAddr 4
-
-uchar mode = 0; // Currently only used to enable calibration mode
-
-struct {
-  float up;
-  float down;
-  float left;
-  float right;
-  int16_t voltage[4];
-  int16_t limit[4];
-} bendAmount;
 
 
 uchar should_be_on=0;
 
 void usbMidiMessageIn(uchar * data)
 {
+	wdt_reset();
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
 		should_be_on ^= 1;
-	
-/*
-  static uchar i = 0;
-
-  if (i==0) { //Sysex not started
-    if ( data[0]==0x04 //code index = sysex start/continue 
-      && data[1]==0xF0 // sysex begin
-      && data[2]==0x12) //magic number...
-      {
-        if ( data[3]==0x34) i=eeFloatAddr;
-        else if ( data[3]==0x35 ) {if (0==mode) mode=2; else mode=0;}
-      }
-  } else { //sysex ongoing
-    if (data[0]==0x04 || data[0]==0x05 || data[0]==0x06 || data[0]==0x07) { //all sysex code index numbers
-
-      if (data[1] & 1) data[2] |=0x80;
-      eeprom_write_byte(i++, data[2]);
-      if (data[1] & 2) data[3] |=0x80;
-      eeprom_write_byte(i++, data[3]);
-
-      if (data[0]!=0x04) { //end of sysex
-        i=0; 
-        eeprom_read_block(&bendAmount, eeFloatAddr, sizeof(bendAmount)); 
-      }
-    }
-  }*/
 }
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
-
 	usbMidiMessageIn(data);
 	if (len==8) usbMidiMessageIn(data+4);
 }
-
-
-
 
 
 //////// Main ////////////
@@ -344,8 +290,10 @@ int main(void) {
 	DDRB |= 1 << PB1;
 	PORTB |= 1 << PB1;
 	usbDeviceDisconnect();
-	for(uchar i=0;i<20;i++){  /* 300 ms disconnect */
-		_delay_ms(15);
+	for(uchar i=0;i<250;i++)
+	{  /* 500 ms disconnect */
+		wdt_reset();
+		_delay_ms(2);
 	}
 	usbDeviceConnect();
 	
@@ -353,7 +301,7 @@ int main(void) {
 
 	usbInit();
 	sei();
-	for(uchar i=0,j=0,k=0;;)
+	for(;;)
 	{
 		
 		wdt_reset();
@@ -370,15 +318,8 @@ int main(void) {
 				PORTB &= ~(1<<PB1);
 			}
 			usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
-			/*if(!++i)
-				if(!++j)
-					if(!++k)
-						PORTB ^= 1 << PB1;*/
+
 		}
-		/*for(uchar i=0;i<20;++i)
-		{
-			_delay_ms(15);
-		}*/
 
 	}
 	return 0;
