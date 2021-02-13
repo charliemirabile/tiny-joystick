@@ -265,16 +265,11 @@ void usbEventResetReady(void) {
 }
 
 
-_Bool should_be_on=0;
-
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
 	{
-		if(should_be_on)
-			should_be_on=0;
-		else
-			should_be_on=1;
+		(PORTB) = (PORTB) ^ (1<<PB1);
 	}
 }
 
@@ -301,14 +296,6 @@ int main(void) {
 	for(;;)
 	{		
 		usbPoll();
-		if(should_be_on)
-		{
-			PORTB |= 1<<PB1;
-		}
-		else
-		{
-			PORTB &= ~(1<<PB1);
-		}
 /*
 		if(usbInterruptIsReady())
 		{
