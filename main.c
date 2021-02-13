@@ -265,12 +265,17 @@ void usbEventResetReady(void) {
 }
 
 
-uchar should_be_on=0;
+_Bool should_be_on=0;
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
-		should_be_on ^= 1;
+	{
+		if(should_be_on)
+			should_be_on=0;
+		else
+			should_be_on=1;
+	}
 }
 
 
