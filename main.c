@@ -200,53 +200,48 @@ uchar usbFunctionDescriptor(usbRequest_t * rq)
 /* ------------------------ interface to USB driver ------------------------ */
 /* ------------------------------------------------------------------------- */
 
-uchar usbFunctionSetup(uchar data[8]) {
-	return 0xff;
+uchar usbFunctionSetup(uchar data[8])
+{
+	return 0;
 }
 
-uchar usbFunctionRead(uchar * data, uchar len) {	
-	data[0] = 0;
-	data[1] = 0;
-	data[2] = 0;
-	data[3] = 0;
-	data[4] = 0;
-	data[5] = 0;
-	data[6] = 0;
-
-	return 7;
-}
-
-uchar usbFunctionWrite(uchar * data, uchar len) {
-	return 1;
-}
 
 
 // Oscillator Calibration
 // Taken directly from EasyLogger: 
 // https://www.obdev.at/products/vusb/easylogger.html
 
-static void calibrateOscillator(void) {
-	uchar	step = 128;
-	uchar	trialValue = 0, optimumValue;
-	int		x, optimumDev, targetValue = (unsigned)(1499 * (double)F_CPU / 10.5e6 + 0.5);
+static void calibrateOscillator(void)
+{
+	uchar step = 128, trialValue = 0, optimumValue;
+	int x, optimumDev, targetValue = (unsigned)(1499 * (double)F_CPU / 10.5e6 + 0.5);
 
 	/* do a binary search: */
-	do{
+	do
+	{
 		OSCCAL = trialValue + step;
 		x = usbMeasureFrameLength();	/* proportional to current real frequency */
-		if(x < targetValue)				/* frequency still too low */
+		if(x < targetValue)		/* frequency still too low */
 			trialValue += step;
 		step >>= 1;
-	}while(step > 0);
+	}
+	while(step > 0);
+
 	/* We have a precision of +/- 1 for optimum OSCCAL here */
 	/* now do a neighborhood search for optimum value */
+
 	optimumValue = trialValue;
+
 	optimumDev = x; /* this is certainly far away from optimum */
-	for(OSCCAL = trialValue - 1; OSCCAL <= trialValue + 1; OSCCAL++){
+
+	for(OSCCAL = trialValue - 1; OSCCAL <= trialValue + 1; OSCCAL++)
+	{
 		x = usbMeasureFrameLength() - targetValue;
-		if(x < 0)
-			x = -x;
-		if(x < optimumDev){
+
+		if(x < 0) x = -x;	//absolute value
+
+		if(x < optimumDev)
+		{
 			optimumDev = x;
 			optimumValue = OSCCAL;
 		}
@@ -254,14 +249,13 @@ static void calibrateOscillator(void) {
 	OSCCAL = optimumValue;
 }
 
-void usbEventResetReady(void) {
-	/* Disable interrupts during oscillator calibration since
-	 * usbMeasureFrameLength() counts CPU cycles.
-	 */
+void usbEventResetReady(void)
+{
+	// Disable interrupts during oscillator calibration since
+	// usbMeasureFrameLength() counts CPU cycles.
 	cli();
 	calibrateOscillator();
 	sei();
-	//eeprom_write_byte(0, OSCCAL);   /* store the calibrated value in EEPROM */
 }
 
 uchar note = 0;
