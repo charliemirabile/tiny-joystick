@@ -296,6 +296,7 @@ int main(void) {
 	
 	//wdt_enable(WDTO_1S);
 
+	wdt_disable();
 	usbInit();
 	//sei();
 	cli();
