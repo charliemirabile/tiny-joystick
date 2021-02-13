@@ -296,7 +296,7 @@ USB_PUBLIC void usbSetInterrupt3(uchar *data, uchar len)
         if((cfgProp) & USB_PROP_IS_RAM)             \
             flags = 0;                              \
         if((cfgProp) & USB_PROP_IS_DYNAMIC){        \
-            len = usbFunctionDescriptor(rq);        \
+            /*len = usbFunctionDescriptor(rq);*/        \
         }else{                                      \
             len = USB_PROP_LENGTH(cfgProp);         \
             usbMsgPtr = (usbMsgPtr_t)(staticName);  \

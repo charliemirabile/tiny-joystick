@@ -183,17 +183,17 @@ const PROGMEM char configDescrMIDI[] = {	/* USB configuration descriptor */
 };
 
 
-uchar usbFunctionDescriptor(usbRequest_t * rq)
+/*uchar usbFunctionDescriptor(usbRequest_t * rq)
 {
 	if (rq->wValue.bytes[1] == USBDESCR_DEVICE) {
 		usbMsgPtr = (uchar *) deviceDescrMIDI;
 		return sizeof(deviceDescrMIDI);
 	}
-	else {		/* must be config descriptor */
+	else {
 		usbMsgPtr = (uchar *) configDescrMIDI;
 		return sizeof(configDescrMIDI);
 	}
-}
+}*/
 
 
 /* ------------------------------------------------------------------------- */
