@@ -264,45 +264,48 @@ void usbEventResetReady(void) {
 	//eeprom_write_byte(0, OSCCAL);   /* store the calibrated value in EEPROM */
 }
 
+uchar note = 0;
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
 	{
-		(PORTB) = (PORTB) ^ (1<<PB1);
+		++note;
+		if(note==128)
+			note = 0;
 	}
 }
 
 
 //////// Main ////////////
 
-int main(void) {
-	DDRB |= 1 << PB1;
-	PORTB |= 1 << PB1;
+void main(void)
+{
+
+	uchar msg[4] = {0x09,0x90,0x2a,0x2a};
+	wdt_disable();
+
 	usbDeviceDisconnect();
 	for(uchar i=0;i<250;i++)
-	{  /* 500 ms disconnect */
+	{
 		//wdt_reset();
 		_delay_ms(2);
 	}
 	usbDeviceConnect();
 	
-	//wdt_enable(WDTO_1S);
 
-	wdt_disable();
 	usbInit();
 	sei();
-	//cli();
+
+
 	for(;;)
 	{		
 		usbPoll();
-/*
 		if(usbInterruptIsReady())
 		{
-			usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
+			msg[2]=note;
+			usbSetInterrupt(msg,sizeof(msg));
 		}
-*/
 
 	}
-	return 0;
 }
