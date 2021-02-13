@@ -267,17 +267,10 @@ void usbEventResetReady(void) {
 
 uchar should_be_on=0;
 
-void usbMidiMessageIn(uchar * data)
-{
-	//wdt_reset();
-	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
-		should_be_on ^= 1;
-}
-
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
-	usbMidiMessageIn(data);
-	if (len==8) usbMidiMessageIn(data+4);
+	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
+		should_be_on ^= 1;
 }
 
 
@@ -298,27 +291,25 @@ int main(void) {
 
 	wdt_disable();
 	usbInit();
-	//sei();
-	cli();
+	sei();
+	//cli();
 	for(;;)
-	{
-		
-		//wdt_reset();
+	{		
 		usbPoll();
+		if(should_be_on)
+		{
+			PORTB |= 1<<PB1;
+		}
+		else
+		{
+			PORTB &= ~(1<<PB1);
+		}
+/*
 		if(usbInterruptIsReady())
 		{
-			
-			if(should_be_on)
-			{
-				PORTB |= 1<<PB1;
-			}
-			else
-			{
-				PORTB &= ~(1<<PB1);
-			}
-			//usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
-
+			usbSetInterrupt((uchar*)"\x09\x90\x2a\x2a",4);
 		}
+*/
 
 	}
 	return 0;
