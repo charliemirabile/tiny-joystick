@@ -269,7 +269,7 @@ uchar should_be_on=0;
 
 void usbMidiMessageIn(uchar * data)
 {
-	wdt_reset();
+	//wdt_reset();
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
 		should_be_on ^= 1;
 }
@@ -289,19 +289,19 @@ int main(void) {
 	usbDeviceDisconnect();
 	for(uchar i=0;i<250;i++)
 	{  /* 500 ms disconnect */
-		wdt_reset();
+		//wdt_reset();
 		_delay_ms(2);
 	}
 	usbDeviceConnect();
 	
-	wdt_enable(WDTO_1S);
+	//wdt_enable(WDTO_1S);
 
 	usbInit();
 	sei();
 	for(;;)
 	{
 		
-		wdt_reset();
+		//wdt_reset();
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
