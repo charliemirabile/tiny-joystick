@@ -258,7 +258,7 @@ void usbEventResetReady(void)
 	sei();
 }
 
-uchar note = 0;
+//uchar note = 0;
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {/*
@@ -270,6 +270,48 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 	}
 */}
 
+typedef enum
+{
+	CENTER,
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+}
+Position;
+
+uchar get_pos(void)
+{
+	ADMUX |= 0b11; //select reading from PB3
+
+	ADCSRA |= 1<<ADSC | 1<< ADIF; //clear interrupt flag and start conversion
+
+	while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
+		;
+
+	if(ADCH<64)
+		return UP;
+
+	if(ADCH>192)
+		return DOWN;
+
+	ADMUX |= 0b10; //select reading from PB4
+
+	ADCSRA |= 1<<ADSC | 1<< ADIF; //clear interrupt flag and start conversion
+
+	while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
+		;
+
+	if(ADCH<64)
+		return LEFT;
+
+	if(ADCH>192)
+		return RIGHT;
+
+	return CENTER;
+}
+
+
 
 //////// Main ////////////
 
@@ -277,6 +319,7 @@ void main(void)
 {
 
 	uchar msg[4] = {0x09,0x90,0x2a,0x2a};
+	uchar last_pos = CENTER;
 	wdt_disable();
 
 	usbDeviceDisconnect();
@@ -296,20 +339,14 @@ void main(void)
 	for(;;)
 	{		
 		usbPoll();
-
-		ADMUX |= 0b11; //select reading from PB3
-
-		ADCSRA |= 1<<ADSC | 1<< ADIF; //clear interrupt flag and start conversion
-
-		while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
-			;
-
-		note = ADCH & 0x7F; //set note to 7 lsb of value
-		
 		if(usbInterruptIsReady())
 		{
-			msg[2]=note;
-			usbSetInterrupt(msg,sizeof(msg));
+			uchar pos = get_pos();
+			if(pos != last_pos)
+			{
+				last_pos = msg[2] = pos;
+				usbSetInterrupt(msg,sizeof(msg));
+			}
 		}
 
 	}
