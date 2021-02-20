@@ -289,10 +289,10 @@ uchar get_pos(void)
 	while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
 		;
 
-	if(ADCH<64)
+	if(ADCH<32)
 		return UP;
 
-	if(ADCH>192)
+	if(ADCH>224)
 		return DOWN;
 
 	ADMUX |= 0b10; //select reading from PB4
@@ -302,10 +302,10 @@ uchar get_pos(void)
 	while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
 		;
 
-	if(ADCH<64)
+	if(ADCH<32)
 		return LEFT;
 
-	if(ADCH>192)
+	if(ADCH>224)
 		return RIGHT;
 
 	return CENTER;
