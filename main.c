@@ -261,14 +261,14 @@ void usbEventResetReady(void)
 uchar note = 0;
 
 void usbFunctionWriteOut(uchar * data, uchar len)
-{
+{/*
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
 	{
 		++note;
 		if(note==128)
 			note = 0;
 	}
-}
+*/}
 
 
 //////// Main ////////////
@@ -290,11 +290,22 @@ void main(void)
 
 	usbInit();
 	sei();
-
+	ADMUX = 1 << ADLAR; //enable left shift of data to access 8bit res in ADCH
+	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
 
 	for(;;)
 	{		
 		usbPoll();
+
+		ADMUX |= 0b11; //select reading from PB3
+
+		ADCSRA |= 1<<ADSC | 1<< ADIF; //clear interrupt flag and start conversion
+
+		while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
+			;
+
+		note = ADCH & 0x7F; //set note to 7 lsb of value
+		
 		if(usbInterruptIsReady())
 		{
 			msg[2]=note;
