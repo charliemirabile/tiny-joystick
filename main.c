@@ -343,24 +343,24 @@ midimsg;
 
 
 
-/*midimsg lookuptable[] = {
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=100},
+midimsg lookuptable[] = {
+/*	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=0},
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},
-	(midimsg){.bytes={0xB0, 0x0B, 100, 100}},
-	(midimsg){.bytes={0xB0, 0x0B, 101, 100}},
-	(midimsg){.bytes={0xB0, 0x0B, 102, 100}},
-	(midimsg){.bytes={0xB0, 0x0B, 103, 100}},
-	(midimsg){.bytes={0xB0, 0x0B, 100, 0}},
-	(midimsg){.bytes={0xB0, 0x0B, 101, 0}},
-	(midimsg){.bytes={0xB0, 0x0B, 102, 0}},
-	(midimsg){.bytes={0xB0, 0x0B, 103, 0}},
-};*/
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},*/
+	(midimsg){.bytes={0x0B, 0xB0, 100, 100}},
+	(midimsg){.bytes={0x0B, 0xB0, 101, 100}},
+	(midimsg){.bytes={0x0B, 0xB0, 102, 100}},
+	(midimsg){.bytes={0x0B, 0xB0, 103, 100}},
+	(midimsg){.bytes={0x0B, 0xB0, 100, 0}},
+	(midimsg){.bytes={0x0B, 0xB0, 101, 0}},
+	(midimsg){.bytes={0x0B, 0xB0, 102, 0}},
+	(midimsg){.bytes={0x0B, 0xB0, 103, 0}},
+};
 
 
 
@@ -371,19 +371,6 @@ midimsg;
 
 void main(void)
 {
-	uchar lookuptable[][4] = {
-		{0x0B, 0xB0, 100, 100},
-		{0x0B, 0xB0, 101, 100},
-		{0x0B, 0xB0, 102, 100},
-		{0x0B, 0xB0, 103, 100},
-		{0x0B, 0xB0, 100, 0},
-		{0x0B, 0xB0, 101, 0},
-		{0x0B, 0xB0, 102, 0},
-		{0x0B, 0xB0, 103, 0},
-	};
-
-	
-
 	uchar last_pos = CENTER;
 	wdt_disable();
 
@@ -414,7 +401,7 @@ void main(void)
 				else
 					move=pos-1;
 				last_pos = pos;
-				usbSetInterrupt(lookuptable[move],4);
+				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
 			}
 		}
 
