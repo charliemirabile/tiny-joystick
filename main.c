@@ -282,9 +282,9 @@ Position;
 
 uchar get_pos(void)
 {
-	ADMUX |= 0b11; //select reading from PB3
+	ADMUX = (1<<ADLAR) | 0b11; //select reading from PB3
 
-	ADCSRA |= 1<<ADSC | 1<< ADIF; //clear interrupt flag and start conversion
+	ADCSRA |= (1<<ADSC) | (1 << ADIF); //clear interrupt flag and start conversion
 
 	while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
 		;
@@ -295,9 +295,9 @@ uchar get_pos(void)
 	if(ADCH>224)
 		return DOWN;
 
-	ADMUX |= 0b10; //select reading from PB4
+	ADMUX = (1<<ADLAR) | 0b11; //select reading from PB4
 
-	ADCSRA |= 1<<ADSC | 1<< ADIF; //clear interrupt flag and start conversion
+	ADCSRA |= (1<<ADSC) | (1<< ADIF); //clear interrupt flag and start conversion
 
 	while(!(ADCSRA & (1<<ADIF))) //busy loop waiting for conversion to finish
 		;
@@ -333,7 +333,6 @@ void main(void)
 
 	usbInit();
 	sei();
-	ADMUX = 1 << ADLAR; //enable left shift of data to access 8bit res in ADCH
 	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
 
 	for(;;)
