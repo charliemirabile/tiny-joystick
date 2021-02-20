@@ -344,7 +344,7 @@ void main(void)
 			if(pos != last_pos)
 			{
 				if(last_pos)
-					mag[2]=pos-1;
+					msg[2]=pos-1;
 				else
 					msg[2]=pos+3;
 				last_pos = pos;
