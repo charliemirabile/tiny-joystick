@@ -344,9 +344,9 @@ void main(void)
 			if(pos != last_pos)
 			{
 				if(last_pos)
-					msg[2]=pos-1;
+					msg[2]=last_pos+3;
 				else
-					msg[2]=pos+3;
+					msg[2]=pos-1;
 				last_pos = pos;
 				usbSetInterrupt(msg,sizeof(msg));
 			}
