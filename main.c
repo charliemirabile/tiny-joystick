@@ -316,10 +316,11 @@ typedef union
 	uchar bytes[4];
 	struct
 	{
-		uchar codeindex:4;
 		uchar cablenum:4;
-		uchar channel:4;
+		uchar codeindex:4;
 		uchar msg_type:4;
+		uchar channel:4;
+		uchar msb1:1;
 		union
 		{
 			uchar note:7;
@@ -328,7 +329,7 @@ typedef union
 			uchar chan_pressure:7;
 			uchar bend_lsb:7;
 		};
-		uchar msb1:1;
+		uchar msb2:1;
 		union
 		{
 			uchar velocity:7;
@@ -336,7 +337,6 @@ typedef union
 			uchar value:7;
 			uchar bend_msb:7;
 		};
-		uchar msb2:1;
 	};	
 }
 midimsg;
