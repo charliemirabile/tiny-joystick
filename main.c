@@ -364,9 +364,6 @@ midimsg lookuptable[] = {
 
 
 
-
-
-
 //////// Main ////////////
 
 void main(void)
@@ -392,7 +389,7 @@ void main(void)
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
-			uchar pos = get_pos();
+			/*uchar pos = get_pos();
 			if(pos != last_pos)
 			{
 				uchar move;
@@ -402,7 +399,8 @@ void main(void)
 					move=pos-1;
 				last_pos = pos;
 				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
-			}
+			}*/
+			usbSetInterrupt((uchar[]){0x0B,0xB0,lookuptable[0].bytes[0]/16,lookuptable[0].bytes[0]%16},4);
 		}
 
 	}
