@@ -311,6 +311,50 @@ uchar get_pos(void)
 	return CENTER;
 }
 
+typedef union
+{
+	uchar bytes[4];
+	struct
+	{
+		uchar codeindex:4;
+		uchar cablenum:4;
+		uchar channel:4;
+		uchar msg_type:4;
+		union
+		{
+			uchar note:7;
+			uchar controller:7;
+			uchar program:7;
+			uchar chan_pressure:7;
+			uchar bend_lsb:7;
+		};
+		uchar msb1:1;
+		union
+		{
+			uchar velocity:7;
+			uchar pressure:7;
+			uchar value:7;
+			uchar bend_msb:7;
+		};
+		uchar msb2:1;
+	};	
+}
+midimsg;
+
+
+
+midimsg lookuptable[] = {
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=127},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=127},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=127},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=127},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=0},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=0},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=0},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},
+};
+
+
 
 
 //////// Main ////////////
@@ -318,7 +362,6 @@ uchar get_pos(void)
 void main(void)
 {
 
-	uchar msg[4] = {0x09,0x90,0x2a,0x2a};
 	uchar last_pos = CENTER;
 	wdt_disable();
 
@@ -343,12 +386,13 @@ void main(void)
 			uchar pos = get_pos();
 			if(pos != last_pos)
 			{
+				uchar move;
 				if(last_pos)
-					msg[2]=last_pos+3;
+					move=last_pos+3;
 				else
-					msg[2]=pos-1;
+					move=pos-1;
 				last_pos = pos;
-				usbSetInterrupt(msg,sizeof(msg));
+				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
 			}
 		}
 
