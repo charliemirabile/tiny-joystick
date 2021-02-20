@@ -400,7 +400,7 @@ void main(void)
 				last_pos = pos;
 				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
 			}*/
-			usbSetInterrupt((uchar[]){0x0B,0xB0,lookuptable[0].bytes[1]/16,lookuptable[0].bytes[1]%16},4);
+			usbSetInterrupt((uchar[]){0x0B,0xB0,lookuptable[0].bytes[2]/16,lookuptable[0].bytes[2]%16},4);
 		}
 
 	}
