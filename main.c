@@ -295,7 +295,7 @@ uchar get_pos(void)
 	if(ADCH>224)
 		return DOWN;
 
-	ADMUX = (1<<ADLAR) | 0b11; //select reading from PB4
+	ADMUX = (1<<ADLAR) | 0b10; //select reading from PB4
 
 	ADCSRA |= (1<<ADSC) | (1<< ADIF); //clear interrupt flag and start conversion
 
