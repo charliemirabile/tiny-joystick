@@ -316,10 +316,10 @@ typedef union
 	uchar bytes[4];
 	struct
 	{
-		uchar cablenum:4;
 		uchar codeindex:4;
-		uchar msg_type:4;
+		uchar cablenum:4;
 		uchar channel:4;
+		uchar msg_type:4;
 		uchar msb1:1;
 		union
 		{
