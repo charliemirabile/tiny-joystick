@@ -344,22 +344,22 @@ midimsg;
 
 
 midimsg lookuptable[] = {
-/*	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=100},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=0},
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},*/
-	(midimsg){.bytes={0x0B, 0xB0, 100, 100}},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},
+/*	(midimsg){.bytes={0x0B, 0xB0, 100, 100}},
 	(midimsg){.bytes={0x0B, 0xB0, 101, 100}},
 	(midimsg){.bytes={0x0B, 0xB0, 102, 100}},
 	(midimsg){.bytes={0x0B, 0xB0, 103, 100}},
 	(midimsg){.bytes={0x0B, 0xB0, 100, 0}},
 	(midimsg){.bytes={0x0B, 0xB0, 101, 0}},
 	(midimsg){.bytes={0x0B, 0xB0, 102, 0}},
-	(midimsg){.bytes={0x0B, 0xB0, 103, 0}},
+	(midimsg){.bytes={0x0B, 0xB0, 103, 0}},*/
 };
 
 
