@@ -344,10 +344,10 @@ midimsg;
 
 
 midimsg lookuptable[] = {
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=127},
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=127},
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=127},
-	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=127},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=100},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=100},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=100},
+	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=100},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=0},
