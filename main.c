@@ -343,7 +343,11 @@ void main(void)
 			uchar pos = get_pos();
 			if(pos != last_pos)
 			{
-				last_pos = msg[2] = pos;
+				if(last_pos)
+					mag[2]=pos-1;
+				else
+					msg[2]=pos+3;
+				last_pos = pos;
 				usbSetInterrupt(msg,sizeof(msg));
 			}
 		}
