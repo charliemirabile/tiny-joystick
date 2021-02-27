@@ -375,7 +375,7 @@ void main(void)
 	sei();
 	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
 
-	uchar val = eeprom_read_byte(77);
+	uchar val = eeprom_read_byte(300);
 
 	for(;;)
 	{		
