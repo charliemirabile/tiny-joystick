@@ -350,20 +350,18 @@ midimsg lookuptable[] = {
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=101, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=102, .value=0},
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},
-/*	(midimsg){.bytes={0x0B, 0xB0, 100, 100}},
-	(midimsg){.bytes={0x0B, 0xB0, 101, 100}},
-	(midimsg){.bytes={0x0B, 0xB0, 102, 100}},
-	(midimsg){.bytes={0x0B, 0xB0, 103, 100}},
-	(midimsg){.bytes={0x0B, 0xB0, 100, 0}},
-	(midimsg){.bytes={0x0B, 0xB0, 101, 0}},
-	(midimsg){.bytes={0x0B, 0xB0, 102, 0}},
-	(midimsg){.bytes={0x0B, 0xB0, 103, 0}},*/
 };
 
 
+void main(void)
+{
+	for(int i = 0; i < 512; ++i)
+		eeprom_write_byte(i,(uchar)i);
+}
+
 
 //////// Main ////////////
-
+/*
 void main(void)
 {
 	uchar last_pos = CENTER;
@@ -402,3 +400,4 @@ void main(void)
 
 	}
 }
+*/
