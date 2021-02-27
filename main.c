@@ -353,15 +353,10 @@ midimsg lookuptable[] = {
 };
 
 
-void main(void)
-{
-	for(int i = 0; i < 512; ++i)
-		eeprom_write_byte(i,(uchar)i);
-}
+
 
 
 //////// Main ////////////
-/*
 void main(void)
 {
 	uchar last_pos = CENTER;
@@ -380,12 +375,15 @@ void main(void)
 	sei();
 	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
 
+	uchar val = eeprom_read_byte(77);
+
 	for(;;)
 	{		
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
-			uchar pos = get_pos();
+			usbSetInterrupt((midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=val}.bytes,sizeof(midimsg));
+			/*uchar pos = get_pos();
 			if(pos != last_pos)
 			{
 				uchar move;
@@ -395,9 +393,8 @@ void main(void)
 					move=pos-1;
 				last_pos = pos;
 				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
-			}
+			}*/
 		}
 
 	}
 }
-*/
