@@ -260,8 +260,147 @@ void usbEventResetReady(void)
 
 //uchar note = 0;
 
+typedef union
+{
+	uchar byte;
+	
+	struct
+	{
+		uchar direction:3;
+		uchar preset_num:4;
+	};
+	struct
+	{
+		uchar channel:4;
+		uchar type:3;
+	};
+}
+config_byte;
+
+typedef union
+{
+	uchar *ptr;
+	uint16_t addr;
+	struct
+	{
+		uint16_t offset:2;
+		uint16_t direction:3;
+		uint16_t preset:4;
+	};
+	struct
+	{
+		uint16_t _:2;
+		uint16_t index:7;
+	};
+}
+config_loc;
+
+#define NOTE_OFF 0x8
+#define NOTE_ON 0x9
+#define POLY_PRESS 0xA
+#define CONTROLLER 0xB
+#define PRG_CHANGE 0xC
+#define CHAN_PRESS 0xD
+#define PITCH_BEND 0xE
+#define NO_MSG 0xF
+
+static union
+{
+	uchar lookup_table[8][4];
+	uchar bytes[32];
+}
+current_prog = {.bytes = {0}};
+
+void change_program(uchar prog)
+{
+	config_loc loc = {.preset = prog & 0xf};//only 16 presets possible
+
+	//copy the 32 byte table for the preset into ram
+	for(uchar i=0;i<32;++i)
+		current_prog.bytes[i]=eeprom_read_byte(loc.ptr+i);	
+}
+
 void usbFunctionWriteOut(uchar * data, uchar len)
-{/*
+{
+	static config_loc loc = {.addr=0};
+
+	//if its not a controller message on virt cable 0 bail
+	if(len != 4)
+		return;
+
+	//program change
+	if(data[0] == 0x0C && data[1] == 0xC0)
+	{
+		change_program(data[3]);
+		return;
+	}
+	if(data[0] != 0x0B)
+		return;
+	if(data[1] != 0xB0)
+		return;
+
+	uchar config = data[3];
+	
+	uchar usb_midi_header = config>>4;
+	
+	switch(data[2])
+	{
+#ifdef EEPROM_CONFIG_CODE
+	case EEPROM_CONFIG_CODE+0:
+		loc.index = config;
+		break;
+	case EEPROM_CONFIG_CODE+1:
+		//or in the msb to turn it form a midi value (0-127) to a midi msg header (128-255)
+		config |= 0x80;
+		//check for them wanting to send no message
+		if(0xf == usb_midi_header)
+		{
+			//write 0 to indicate no message
+			eeprom_write_byte(config_loc.ptr,0);
+		}
+		else
+		{
+			//write the usb midi header byte
+			eeprom_write_byta(config_loc.ptr,usb_midi_header);
+			//write the midi header byte
+			eeprom_write_byte(config_loc.ptr+1, config);
+		}
+		break;
+	case EEPROM_CONFIG_CODE+2:
+		//write the first argument byte
+		eeprom_write_byte(config_loc.ptr+2,config);
+		break;
+	case EEPROM_CONFIG_CODE+3:
+		//write the second argument byte
+		eeprom_write_byte(config_loc.ptr+3,config);
+		break;
+#endif
+
+#ifdef RUNTIME_ARG1_CONFIG_CODE
+	case RUNTIME_ARG1_CONFIG_CODE ... RUNTIME_ARG1_CONFIG_CODE+7:
+		current_prog[data[2]-RUNTIME_ARG1_CONFIG_CODE][3] = config;
+#endif
+
+#ifdef RUNTIME_ARG2_CONFIG_CODE
+	case RUNTIME_ARG2_CONFIG_CODE ... RUNTIME_ARG2_CONFIG_CODE+7:
+		current_prog[data[2]-RUNTIME_ARG2_CONFIG_CODE][3] = config;
+#endif
+
+#ifdef RUNTIME_TYPE_CONFIG_CODE
+	case RUNTIME_TYPE_CONFIG_CODE ... RUNTIME_TYPE_CONFIG_CODE+7:
+		if(0xf == usb_midi_header)
+		{
+			current_prog[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = 0;
+		}
+		else
+		{
+			current_prog[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = ;
+			
+		}
+#endif
+		
+	}
+/*
 	if(data[0]==0x0B && data[1]==0xB0 && data[2]==100 && data[3]==0)
 	{
 		++note;
@@ -352,8 +491,58 @@ midimsg lookuptable[] = {
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},
 };
 
+typedef union
+{
+	uchar bytes[4];
+	struct
+	{
+		uchar packet_header;
+		uchar midi_header;
+		uchar midi_arg1;
+		uchar midi_arg2;
+	};
+}
+USB_midi_msg;
+
+static union
+{
+	uchar bytes[32];
+	USB_midi_msg direction_lookup_table[8];	
+}
+current_program = {.direction_lookup_table[0] = {.packet_header = 0x09, .midi_header = 0x90, .midi_arg1 = 42, .midi_arg2 = 42}};
 
 
+int main(void)
+{
+	usbDeviceDisconnect();
+	for(uchar i=0;i<250;i++)
+		_delay_ms(2);
+	usbDeviceConnect();
+
+	usbInit();
+	sei();
+
+	uchar last_pos = CENTER;
+
+	for(;;)
+	{
+		usbPoll();
+		if(usbInterruptIsReady())
+		{
+			uchar pos = get_pos();
+			if(pos != last_pos)
+			{
+				uchar move = pos & 0x4; //if new position is center we set the 4's place
+				move |= (pos | last_pos) & 0x3; //1's and 2's place comes from the direction
+				last_pos = pos;
+				if(current_program.direction_lookup_table[move].bytes[0] != 0)
+					usbSetInterrupt(current_program.direction_lookup_table[move].bytes,sizeof(USB_midi_msg));
+			}
+		}
+	}
+}
+
+/*
 
 
 //////// Main ////////////
@@ -383,7 +572,7 @@ void main(void)
 		if(usbInterruptIsReady())
 		{
 			usbSetInterrupt((midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=val}.bytes,sizeof(midimsg));
-			/*uchar pos = get_pos();
+			uchar pos = get_pos();
 			if(pos != last_pos)
 			{
 				uchar move;
@@ -393,8 +582,9 @@ void main(void)
 					move=pos-1;
 				last_pos = pos;
 				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
-			}*/
+			}
 		}
 
 	}
 }
+*/
