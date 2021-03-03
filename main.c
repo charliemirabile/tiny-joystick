@@ -262,6 +262,26 @@ void usbEventResetReady(void)
 
 typedef union
 {
+	uchar bytes[4];
+	struct
+	{
+		uchar packet_header;
+		uchar midi_header;
+		uchar midi_arg1;
+		uchar midi_arg2;
+	};
+}
+USB_midi_msg;
+
+static union
+{
+	uchar bytes[32];
+	USB_midi_msg direction_lookup_table[8];	
+}
+current_program = {.direction_lookup_table[0] = {.packet_header = 0x09, .midi_header = 0x90, .midi_arg1 = 42, .midi_arg2 = 42}};
+
+typedef union
+{
 	uchar byte;
 	
 	struct
@@ -304,6 +324,8 @@ config_loc;
 #define PITCH_BEND 0xE
 #define NO_MSG 0xF
 
+
+
 static union
 {
 	uchar lookup_table[8][4];
@@ -317,10 +339,12 @@ void change_program(uchar prog)
 
 	//copy the 32 byte table for the preset into ram
 	for(uchar i=0;i<32;++i)
-		current_prog.bytes[i]=eeprom_read_byte(loc.ptr+i);	
+		current_program.bytes[i]=eeprom_read_byte(loc.ptr+i);	
 }
 
 #define EEPROM_CONFIG_CODE 100
+
+#define RUNTIME_ARG1_CONFIG_CODE 104
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
@@ -380,23 +404,23 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 
 #ifdef RUNTIME_ARG1_CONFIG_CODE
 	case RUNTIME_ARG1_CONFIG_CODE ... RUNTIME_ARG1_CONFIG_CODE+7:
-		current_prog[data[2]-RUNTIME_ARG1_CONFIG_CODE][3] = config;
+		current_program.direction_lookup_table[data[2]-RUNTIME_ARG1_CONFIG_CODE].bytes[3] = config;
 #endif
 
 #ifdef RUNTIME_ARG2_CONFIG_CODE
 	case RUNTIME_ARG2_CONFIG_CODE ... RUNTIME_ARG2_CONFIG_CODE+7:
-		current_prog[data[2]-RUNTIME_ARG2_CONFIG_CODE][3] = config;
+		current_program[data[2]-RUNTIME_ARG2_CONFIG_CODE][3] = config;
 #endif
 
 #ifdef RUNTIME_TYPE_CONFIG_CODE
 	case RUNTIME_TYPE_CONFIG_CODE ... RUNTIME_TYPE_CONFIG_CODE+7:
 		if(0xf == usb_midi_header)
 		{
-			current_prog[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = 0;
+			current_program[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = 0;
 		}
 		else
 		{
-			current_prog[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = ;
+			current_program[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = ;
 			
 		}
 #endif
@@ -493,25 +517,6 @@ midimsg lookuptable[] = {
 	(midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=103, .value=0},
 };
 
-typedef union
-{
-	uchar bytes[4];
-	struct
-	{
-		uchar packet_header;
-		uchar midi_header;
-		uchar midi_arg1;
-		uchar midi_arg2;
-	};
-}
-USB_midi_msg;
-
-static union
-{
-	uchar bytes[32];
-	USB_midi_msg direction_lookup_table[8];	
-}
-current_program = {.direction_lookup_table[0] = {.packet_header = 0x09, .midi_header = 0x90, .midi_arg1 = 42, .midi_arg2 = 42}};
 
 /*
 int main(void)
