@@ -342,11 +342,15 @@ void change_program(uchar prog)
 		current_program.bytes[i]=eeprom_read_byte(loc.ptr+i);	
 }
 
+static _Bool mode = 0;
+static uchar prog = 0;
+
 
 #define RUNTIME_TYPE_CONFIG_CODE 16
 #define RUNTIME_ARG1_CONFIG_CODE 24
 #define RUNTIME_ARG2_CONFIG_CODE 32
 #define EEPROM_CONFIG_CODE 40
+#define MODE_SWAP_CODE 15
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
@@ -375,6 +379,10 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 	
 	switch(data[2])
 	{
+#ifdef MODE_SWAP_CODE
+	case MODE_SWAP_CODE:
+		mode = !mode;
+#endif
 #ifdef EEPROM_CONFIG_CODE
 	case EEPROM_CONFIG_CODE+0:
 		loc.index = config;
@@ -556,7 +564,6 @@ int main(void)
 
 
 
-
 //////// Main ////////////
 void main(void)
 {
@@ -590,8 +597,24 @@ void main(void)
 				else
 					move=pos-1;
 				last_pos = pos;
-				if(current_program.direction_lookup_table[move].bytes[0] != 0)
-					usbSetInterrupt(current_program.direction_lookup_table[move].bytes,sizeof(USB_midi_msg));
+				if(mode==0||move&2)
+				{
+					if(current_program.direction_lookup_table[move].bytes[0] != 0)
+						usbSetInterrupt(current_program.direction_lookup_table[move].bytes,sizeof(USB_midi_msg));
+				}
+				else
+				{
+					if(!(move&4))
+					{
+						if(move)
+							--prog;
+						else
+							++prog;
+						prog&=127;
+						usbSetInterrupt((USB_midi_msg){.packet_header=0x0C,.midi_header=0xC0,.midi_arg1=prog}.bytes,sizeof(USB_midi_msg));
+					}
+				}
+				
 			}
 		}
 
