@@ -578,8 +578,8 @@ void main(void)
 				else
 					move=pos-1;
 				last_pos = pos;
-				if(current_program.direction_lookup_table[move].bytes[0] != 0)
-					usbSetInterrupt(current_program.direction_lookup_table[move].bytes,sizeof(USB_midi_msg));
+/*				if(current_program.direction_lookup_table[move].bytes[0] != 0)
+					usbSetInterrupt(current_program.direction_lookup_table[move].bytes,sizeof(USB_midi_msg));*/
 			}
 		}
 
