@@ -382,6 +382,7 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 #ifdef MODE_SWAP_CODE
 	case MODE_SWAP_CODE:
 		mode = !mode;
+		break;
 #endif
 #ifdef EEPROM_CONFIG_CODE
 	case EEPROM_CONFIG_CODE+0:
@@ -611,7 +612,7 @@ void main(void)
 						else
 							++prog;
 						prog&=127;
-						usbSetInterrupt((USB_midi_msg){.packet_header=0x0C,.midi_header=0xC0,.midi_arg1=prog}.bytes,sizeof(USB_midi_msg));
+						usbSetInterrupt((USB_midi_msg){.packet_header=0x0C,.midi_header=0xC0,.midi_arg1=prog, .midi_arg2=0}.bytes,sizeof(USB_midi_msg));
 					}
 				}
 				
