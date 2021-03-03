@@ -37,10 +37,10 @@ flash:	all
 
 
 # Fuse high byte:
-# 0xdd = 1 1 0 1   1 1 0 1
+# 0xd7 = 1 1 0 1   0 1 1 1
 #        ^ ^ ^ ^   ^ \-+-/ 
 #        | | | |   |   +------ BODLEVEL 2..0 (brownout trigger level -> 2.7V)
-#        | | | |   +---------- EESAVE (preserve EEPROM on Chip Erase -> not preserved)
+#        | | | |   +---------- EESAVE (preserve EEPROM on Chip Erase -> preserved)
 #        | | | +-------------- WDTON (watchdog timer always on -> disable)
 #        | | +---------------- SPIEN (enable serial programming -> enabled)
 #        | +------------------ DWEN (debug wire enable)
@@ -54,7 +54,7 @@ flash:	all
 #        | +------------------ CKOUT (clock output on CKOUT pin -> disabled)
 #        +-------------------- CKDIV8 (divide clock by 8 -> don't divide)
 fuse:
-	$(AVRDUDE) -U hfuse:w:0xdd:m -U lfuse:w:0xe1:m
+	$(AVRDUDE) -U hfuse:w:0xd7:m -U lfuse:w:0xe1:m
 
 readcal:
 	$(AVRDUDE) -U calibration:r:/dev/stdout:i | head -1
