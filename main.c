@@ -342,9 +342,11 @@ void change_program(uchar prog)
 		current_program.bytes[i]=eeprom_read_byte(loc.ptr+i);	
 }
 
-#define EEPROM_CONFIG_CODE 100
 
-#define RUNTIME_ARG1_CONFIG_CODE 104
+#define RUNTIME_TYPE_CONFIG_CODE 16
+#define RUNTIME_ARG1_CONFIG_CODE 24
+#define RUNTIME_ARG2_CONFIG_CODE 32
+#define EEPROM_CONFIG_CODE 40
 
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
@@ -366,8 +368,10 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 		return;
 
 	uchar config = data[3];
+
+	uchar type = data[3]|0x80;
 	
-	uchar usb_midi_header = config>>4;
+	uchar usb_midi_header = type>>4;
 	
 	switch(data[2])
 	{
@@ -376,8 +380,6 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 		loc.index = config;
 		break;
 	case EEPROM_CONFIG_CODE+1:
-		//or in the msb to turn it form a midi value (0-127) to a midi msg header (128-255)
-		config |= 0x80;
 		//check for them wanting to send no message
 		if(0xf == usb_midi_header)
 		{
@@ -389,7 +391,7 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 			//write the usb midi header byte
 			eeprom_write_byte(loc.ptr,usb_midi_header);
 			//write the midi header byte
-			eeprom_write_byte(loc.ptr+1, config);
+			eeprom_write_byte(loc.ptr+1, type);
 		}
 		break;
 	case EEPROM_CONFIG_CODE+2:
@@ -404,25 +406,28 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 
 #ifdef RUNTIME_ARG1_CONFIG_CODE
 	case RUNTIME_ARG1_CONFIG_CODE ... RUNTIME_ARG1_CONFIG_CODE+7:
-		current_program.direction_lookup_table[data[2]-RUNTIME_ARG1_CONFIG_CODE].bytes[3] = config;
+		current_program.direction_lookup_table[data[2]-RUNTIME_ARG1_CONFIG_CODE].bytes[2] = config;
+		break;
 #endif
 
 #ifdef RUNTIME_ARG2_CONFIG_CODE
 	case RUNTIME_ARG2_CONFIG_CODE ... RUNTIME_ARG2_CONFIG_CODE+7:
-		current_program[data[2]-RUNTIME_ARG2_CONFIG_CODE][3] = config;
+		current_program.direction_lookup_table[data[2]-RUNTIME_ARG2_CONFIG_CODE].bytes[3] = config;
+		break;
 #endif
 
 #ifdef RUNTIME_TYPE_CONFIG_CODE
 	case RUNTIME_TYPE_CONFIG_CODE ... RUNTIME_TYPE_CONFIG_CODE+7:
 		if(0xf == usb_midi_header)
 		{
-			current_program[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = 0;
+			current_program.direction_lookup_table[data[2]-RUNTIME_TYPE_CONFIG_CODE].bytes[0] = 0;
 		}
 		else
 		{
-			current_program[data[2]-RUNTIME_TYPE_CONFIG_CODE]][0] = ;
-			
+			current_program.direction_lookup_table[data[2]-RUNTIME_TYPE_CONFIG_CODE].bytes[0] = usb_midi_header;
+			current_program.direction_lookup_table[data[2]-RUNTIME_TYPE_CONFIG_CODE].bytes[1] = type;
 		}
+		break;
 #endif
 		
 	}
