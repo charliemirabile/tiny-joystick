@@ -320,6 +320,8 @@ void change_program(uchar prog)
 		current_prog.bytes[i]=eeprom_read_byte(loc.ptr+i);	
 }
 
+#define EEPROM_CONFIG_CODE 100
+
 void usbFunctionWriteOut(uchar * data, uchar len)
 {
 	static config_loc loc = {.addr=0};
@@ -356,23 +358,23 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 		if(0xf == usb_midi_header)
 		{
 			//write 0 to indicate no message
-			eeprom_write_byte(config_loc.ptr,0);
+			eeprom_write_byte(loc.ptr,0);
 		}
 		else
 		{
 			//write the usb midi header byte
-			eeprom_write_byta(config_loc.ptr,usb_midi_header);
+			eeprom_write_byte(loc.ptr,usb_midi_header);
 			//write the midi header byte
-			eeprom_write_byte(config_loc.ptr+1, config);
+			eeprom_write_byte(loc.ptr+1, config);
 		}
 		break;
 	case EEPROM_CONFIG_CODE+2:
 		//write the first argument byte
-		eeprom_write_byte(config_loc.ptr+2,config);
+		eeprom_write_byte(loc.ptr+2,config);
 		break;
 	case EEPROM_CONFIG_CODE+3:
 		//write the second argument byte
-		eeprom_write_byte(config_loc.ptr+3,config);
+		eeprom_write_byte(loc.ptr+3,config);
 		break;
 #endif
 
