@@ -511,7 +511,7 @@ static union
 }
 current_program = {.direction_lookup_table[0] = {.packet_header = 0x09, .midi_header = 0x90, .midi_arg1 = 42, .midi_arg2 = 42}};
 
-
+/*
 int main(void)
 {
 	usbDeviceDisconnect();
@@ -540,9 +540,9 @@ int main(void)
 			}
 		}
 	}
-}
+}*/
 
-/*
+
 
 
 //////// Main ////////////
@@ -564,14 +564,11 @@ void main(void)
 	sei();
 	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
 
-	uchar val = eeprom_read_byte(300);
-
 	for(;;)
 	{		
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
-			usbSetInterrupt((midimsg){.codeindex=0xB, .channel=0, .msg_type=0xB, .controller=100, .value=val}.bytes,sizeof(midimsg));
 			uchar pos = get_pos();
 			if(pos != last_pos)
 			{
@@ -581,10 +578,11 @@ void main(void)
 				else
 					move=pos-1;
 				last_pos = pos;
-				usbSetInterrupt(lookuptable[move].bytes,sizeof(midimsg));
+				if(current_program.direction_lookup_table[move].bytes[0] != 0)
+					usbSetInterrupt(current_program.direction_lookup_table[move].bytes,sizeof(USB_midi_msg));
 			}
 		}
 
 	}
 }
-*/
+
