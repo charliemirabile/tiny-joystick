@@ -339,7 +339,12 @@ void change_program(uchar prog)
 
 	//copy the 32 byte table for the preset into ram
 	for(uchar i=0;i<32;++i)
-		current_program.bytes[i]=eeprom_read_byte(loc.ptr+i);	
+	{
+		uchar byte = eeprom_read_byte(loc.ptr+i);
+		if(byte==0xff)
+			byte = 0;
+		current_program.bytes[i]=byte;
+	}
 }
 
 static _Bool toggle_mode = 0;
