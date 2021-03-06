@@ -573,6 +573,22 @@ int main(void)
 //////// Main ////////////
 void main(void)
 {
+	wdt_disable();
+
+	usbDeviceDisconnect();
+	for(uchar i=0;i<250;i++)
+	{
+		//wdt_reset();
+		_delay_ms(2);
+	}
+	usbDeviceConnect();
+	
+
+	usbInit();
+	sei();
+
+	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
+
 	_Bool mode = 0;
 	uchar prog = 0;
 	uchar last_pos = get_pos();
@@ -595,20 +611,6 @@ void main(void)
 		change_program(3);
 		break;
 	}
-	wdt_disable();
-
-	usbDeviceDisconnect();
-	for(uchar i=0;i<250;i++)
-	{
-		//wdt_reset();
-		_delay_ms(2);
-	}
-	usbDeviceConnect();
-	
-
-	usbInit();
-	sei();
-	ADCSRA = 1 << ADEN | 0b110; //enable ADC and set prescaler to 6 (divide by 64)
 
 	for(;;)
 	{		
