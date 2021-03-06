@@ -342,8 +342,7 @@ void change_program(uchar prog)
 		current_program.bytes[i]=eeprom_read_byte(loc.ptr+i);	
 }
 
-static _Bool mode = 0;
-static uchar prog = 0;
+static _Bool toggle_mode = 0;
 
 
 #define RUNTIME_TYPE_CONFIG_CODE 16
@@ -381,7 +380,7 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 	{
 #ifdef MODE_SWAP_CODE
 	case MODE_SWAP_CODE:
-		mode = !mode;
+		toggle_mode = 1;
 		break;
 #endif
 #ifdef EEPROM_CONFIG_CODE
@@ -550,6 +549,7 @@ int main(void)
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
+
 			uchar pos = get_pos();
 			if(pos != last_pos)
 			{
@@ -568,6 +568,8 @@ int main(void)
 //////// Main ////////////
 void main(void)
 {
+	_Bool mode = 0;
+	uchar prog = 0;
 	uchar last_pos = CENTER;
 	wdt_disable();
 
@@ -589,6 +591,11 @@ void main(void)
 		usbPoll();
 		if(usbInterruptIsReady())
 		{
+			if(toggle_mode)
+			{
+				toggle_mode=0;
+				mode = !mode;
+			}
 			uchar pos = get_pos();
 			if(pos != last_pos)
 			{
