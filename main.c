@@ -575,7 +575,26 @@ void main(void)
 {
 	_Bool mode = 0;
 	uchar prog = 0;
-	uchar last_pos = CENTER;
+	uchar last_pos = get_pos();
+	switch(last_pos)
+	{
+	case UP:
+		change_program(0);
+		mode = 1;
+		break;
+	case CENTER:
+		change_program(0);
+		break;
+	case LEFT:
+		change_program(1);
+		break;
+	case DOWN:
+		change_program(2);
+		break;
+	case RIGHT:
+		change_program(3);
+		break;
+	}
 	wdt_disable();
 
 	usbDeviceDisconnect();
