@@ -367,7 +367,7 @@ void usbFunctionWriteOut(uchar * data, uchar len)
 	//program change
 	if(data[0] == 0x0C && data[1] == 0xC0)
 	{
-		change_program(data[3]);
+		change_program(data[2]);
 		return;
 	}
 	if(data[0] != 0x0B)
